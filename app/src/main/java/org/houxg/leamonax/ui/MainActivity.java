@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.database.CursorWindow;
 
 import com.elvishew.xlog.XLog;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -31,6 +32,7 @@ import org.houxg.leamonax.utils.NetworkUtils;
 import org.houxg.leamonax.utils.ToastUtils;
 
 import java.util.Locale;
+import java.lang.reflect.Field;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -111,6 +113,16 @@ public class MainActivity extends BaseActivity implements Navigation.Callback {
     @Override
     protected void onResume() {
         super.onResume();
+        Field field = null;
+        try {
+            field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+            field.setAccessible(true);
+            field.set(null, 10 * 1024 * 1024); //the 10MB is the new size
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         mNavigation.onResume();
     }
 
